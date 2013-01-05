@@ -86,6 +86,7 @@ sub login
     my $res = $ua->get($welcome);
     my $data = $res->content();
     my $form = HTML::Form->parse($data, $base);
+    die "No form defined for $data" unless $form;
     $form->value(ssousername => $username);
     $form->value(password => $password);
     $res = $ua->request($form->click);
@@ -117,9 +118,12 @@ sub packages
     print OUT $data;
     close OUT;
 
-#    warn Dumper($form->inputs);
 
     my $form = HTML::Form->parse($data, 'https://edelivery.oracle.com');
+    open OUT, ">packages.pm";
+    print OUT Dumper($form->inputs);;
+    close OUT;
+
     my $product=$form->find_input('product');
     die unless $product;
 #product
@@ -135,495 +139,102 @@ sub packages
     my $res = $ua->request($form->click);
     $data = $res->content();
 
-    open OUT, ">packagesout.html";
-    print OUT $data;
-    close OUT;
-
+    return $data;
 # platform
 #                                'value' => '226',
 #                                'name' => 'Linux x86-64'
-    
-# $Var1 = bless( {
-#                  'onchange' => ';popup_populate(\'A\', \'B\');EPDSearchProductPlatformChanged();',
-#                  'current' => 0,
-#                  'menu' => [
-#                              {
-#                                'seen' => 1,
-#                                'value' => '',
-#                                'name' => '- Select a product pack -'
-#                              },
-#                              {
-#                                'value' => '19928',
-#                                'name' => 'ATG Web Commerce'
-#                              },
-#                              {
-#                                'value' => '20781',
-#                                'name' => 'ATG Web Commerce Self-Study'
-#                              },
-#                              {
-#                                'value' => '126',
-#                                'name' => 'E-Business Suite'
-#                              },
-#                              {
-#                                'value' => '15631',
-#                                'name' => 'E-Business Suite Self-Study'
-#                              },
-#                              {
-#                                'value' => '9350',
-#                                'name' => 'Financial Services Applications'
-#                              },
-#                              {
-#                                'value' => '12063',
-#                                'name' => 'Health Sciences'
-#                              },
-#                              {
-#                                'value' => '13904',
-#                                'name' => 'Hyperion Performance Management and BI'
-#                              },
-#                              {
-#                                'value' => '15629',
-#                                'name' => 'Hyperion Performance Management and BI Self-Study'
-#                              },
-#                              {
-#                                'value' => '11484',
-#                                'name' => 'iLearning Applications'
-#                              },
-#                              {
-#                                'value' => '12685',
-#                                'name' => 'JD Edwards EnterpriseOne'
-#                              },
-#                              {
-#                                'value' => '15628',
-#                                'name' => 'JD Edwards EnterpriseOne Self-Study'
-#                              },
-#                              {
-#                                'value' => '12686',
-#                                'name' => 'JD Edwards World'
-#                              },
-#                              {
-#                                'value' => '19251',
-#                                'name' => 'M-Series Products'
-#                              },
-#                              {
-#                                'value' => '18251',
-#                                'name' => 'MySQL Database'
-#                              },
-#                              {
-#                                'value' => '12285',
-#                                'name' => 'On Demand'
-#                              },
-#                              {
-#                                'value' => '14225',
-#                                'name' => 'Oracle Agile Applications'
-#                              },
-#                              {
-#                                'value' => '13664',
-#                                'name' => 'Oracle Application Integration Architecture'
-#                              },
-#                              {
-#                                'value' => '14224',
-#                                'name' => 'Oracle AutoVue'
-#                              },
-#                              {
-#                                'value' => '15384',
-#                                'name' => 'Oracle BEA'
-#                              },
-#                              {
-#                                'value' => '14125',
-#                                'name' => 'Oracle Beehive'
-#                              },
-#                              {
-#                                'value' => '13045',
-#                                'name' => 'Oracle Business Intelligence'
-#                              },
-#                              {
-#                                'value' => '13364',
-#                                'name' => 'Oracle Communications Applications'
-#                              },
-#                              {
-#                                'value' => '15585',
-#                                'name' => 'Oracle Crystal Ball'
-#                              },
-#                              {
-#                                'value' => '9480',
-#                                'name' => 'Oracle Database'
-#                              },
-#                              {
-#                                'value' => '15626',
-#                                'name' => 'Oracle Database Self-Study'
-#                              },
-#                              {
-#                                'value' => '13264',
-#                                'name' => 'Oracle Demantra'
-#                              },
-#                              {
-#                                'value' => '18249',
-#                                'name' => 'Oracle Desktop Virtualization Products'
-#                              },
-#                              {
-#                                'value' => '18189',
-#                                'name' => 'Oracle EIS-DVD Content'
-#                              },
-#                              {
-#                                'value' => '20733',
-#                                'name' => 'Oracle Endeca'
-#                              },
-#                              {
-#                                'value' => '20782',
-#                                'name' => 'Oracle Endeca Self-Study'
-#                              },
-#                              {
-#                                'value' => '12965',
-#                                'name' => 'Oracle Enterprise Manager'
-#                              },
-#                              {
-#                                'value' => '15505',
-#                                'name' => 'Oracle Enterprise Performance Management System'
-#                              },
-#                              {
-#                                'value' => '16025',
-#                                'name' => 'Oracle Financial Services Products'
-#                              },
-#                              {
-#                                'value' => '15632',
-#                                'name' => 'Oracle Fusion Applications'
-#                              },
-#                              {
-#                                'value' => '10120',
-#                                'name' => 'Oracle Fusion Middleware'
-#                              },
-#                              {
-#                                'value' => '15746',
-#                                'name' => 'Oracle Fusion Middleware Self-Study'
-#                              },
-#                              {
-#                                'value' => '13984',
-#                                'name' => 'Oracle Governance Risk and Compliance'
-#                              },
-#                              {
-#                                'value' => '15565',
-#                                'name' => 'Oracle Insurance Applications'
-#                              },
-#                              {
-#                                'value' => '20250',
-#                                'name' => 'Oracle Knowledge'
-#                              },
-#                              {
-#                                'value' => '13943',
-#                                'name' => 'Oracle Outside In Technology'
-#                              },
-#                              {
-#                                'value' => '16045',
-#                                'name' => 'Oracle Policy Automation'
-#                              },
-#                              {
-#                                'value' => '9701',
-#                                'name' => 'Oracle RDB'
-#                              },
-#                              {
-#                                'value' => '19548',
-#                                'name' => 'Oracle Repair Infrastructure Products'
-#                              },
-#                              {
-#                                'value' => '12788',
-#                                'name' => 'Oracle Retail Applications'
-#                              },
-#                              {
-#                                'value' => '13084',
-#                                'name' => 'Oracle Secure Enterprise Search'
-#                              },
-#                              {
-#                                'value' => '18248',
-#                                'name' => 'Oracle Solaris'
-#                              },
-#                              {
-#                                'value' => '18250',
-#                                'name' => 'Oracle Solaris Virtualization Products'
-#                              },
-#                              {
-#                                'value' => '18108',
-#                                'name' => 'Oracle StorageTek Products'
-#                              },
-#                              {
-#                                'value' => '14644',
-#                                'name' => 'Oracle Tax Applications'
-#                              },
-#                              {
-#                                'value' => '13606',
-#                                'name' => 'Oracle Utilities Applications'
-#                              },
-#                              {
-#                                'value' => '22395',
-#                                'name' => 'Oracle Virtual Networking'
-#                              },
-#                              {
-#                                'value' => '12684',
-#                                'name' => 'PeopleSoft Enterprise'
-#                              },
-#                              {
-#                                'value' => '15627',
-#                                'name' => 'Peoplesoft Enterprise Self-Study'
-#                              },
-#                              {
-#                                'value' => '22235',
-#                                'name' => 'Pillar Axiom Products'
-#                              },
-#                              {
-#                                'value' => '15925',
-#                                'name' => 'Primavera Applications'
-#                              },
-#                              {
-#                                'value' => '15745',
-#                                'name' => 'Related Technologies Self-Study'
-#                              },
-#                              {
-#                                'value' => '13046',
-#                                'name' => 'Siebel CRM'
-#                              },
-#                              {
-#                                'value' => '15630',
-#                                'name' => 'Siebel CRM Self-Study'
-#                              },
-#                              {
-#                                'value' => '17225',
-#                                'name' => 'Sun Products'
-#                              },
-#                              {
-#                                'value' => '17245',
-#                                'name' => 'Sun Self-Study'
-#                              },
-#                              {
-#                                'value' => '21375',
-#                                'name' => 'Taleo Products'
-#                              },
-#                              {
-#                                'value' => '12964',
-#                                'name' => 'User Productivity Kit'
-#                              }
-#                            ],
+# Options :    
 #                  'name' => 'product',
-#                  'idx' => 1,
-#                  'type' => 'option',
-#                  'size' => '1'
-#                }, 'HTML::Form::ListInput' );
-
-# $VAR2 = bless( {
-#                  'onchange' => 'EPDSearchProductPlatformChanged();',
-#                  'current' => 0,
-#                  'menu' => [
-#                              {
-#                                'seen' => 1,
-#                                'value' => '999',
-#                                'name' => 'HP-UX PA-RISC (32-bit)'
-#                              },
-#                              {
-#                                'value' => '',
-#                                'name' => '- Select a platform -'
-#                              },
-#                              {
-#                                'value' => '227',
-#                                'name' => 'IBM: Linux on POWER Systems'
-#                              },
-#                              {
-#                                'value' => '304',
-#                                'name' => 'HP NonStop Itanium (Guardian)'
-#                              },
-#                              {
-#                                'value' => '312',
-#                                'name' => 'Fujitsu BS2000/OSD (SQ series)'
-#                              },
-#                              {
-#                                'value' => '173',
-#                                'name' => 'Oracle Solaris on x86 (32-bit)'
-#                              },
-#                              {
-#                                'value' => '421',
-#                                'name' => 'Apple Mac OS X (PowerPC)'
-#                              },
-#                              {
-#                                'value' => '212',
-#                                'name' => 'IBM AIX on POWER Systems (64-bit)'
-#                              },
-#                              {
-#                                'value' => '211',
-#                                'name' => 'IBM S/390 Based Linux (31-bit)'
-#                              },
-#                              {
-#                                'value' => '912',
-#                                'name' => 'Microsoft Windows (32-bit)'
-#                              },
-#                              {
-#                                'value' => '308',
-#                                'name' => 'HP NonStop Itanium (OSS)'
-#                              },
-#                              {
-#                                'value' => '522',
-#                                'name' => 'Apple Mac OS X (Intel) (64-bit)'
-#                              },
-#                              {
-#                                'value' => '209',
-#                                'name' => 'IBM: Linux on System z'
-#                              },
-#                              {
-#                                'value' => '30',
-#                                'name' => 'IBM z/OS on System z'
-#                              },
-#                              {
-#                                'value' => '23',
-#                                'name' => 'Oracle Solaris on SPARC (64-bit)'
-#                              },
-#                              {
-#                                'value' => '453',
-#                                'name' => 'Oracle Solaris on SPARC (32-bit)'
-#                              },
-#                              {
-#                                'value' => '214',
-#                                'name' => 'Linux Itanium'
-#                              },
-#                              {
-#                                'value' => '228',
-#                                'name' => 'FreeBSD - x86'
-#                              },
-#                              {
-#                                'value' => '87',
-#                                'name' => 'HP Tru64 UNIX'
-#                              },
-#                              {
-#                                'value' => '267',
-#                                'name' => 'Oracle Solaris on x86-64 (64-bit)'
-#                              },
-#                              {
-#                                'value' => '1',
-#                                'name' => 'HP OpenVMS VAX'
-#                              },
-#                              {
-#                                'value' => '233',
-#                                'name' => 'Microsoft Windows x64 (64-bit)'
-#                              },
-#                              {
-#                                'value' => '197',
-#                                'name' => 'HP-UX Itanium'
-#                              },
-#                              {
-#                                'value' => '293',
-#                                'name' => 'Apple Mac OS X (Intel) (32-bit)'
-#                              },
-#                              {
-#                                'value' => '303',
-#                                'name' => 'HP NonStop S-series (Guardian)'
-#                              },
-#                              {
-#                                'value' => '316',
-#                                'name' => 'Unisys OS 2200'
-#                              },
-#                              {
-#                                'value' => '59',
-#                                'name' => 'HP-UX PA-RISC (64-bit)'
-#                              },
-#                              {
-#                                'value' => '243',
-#                                'name' => 'HP OpenVMS Itanium'
-#                              },
-#                              {
-#                                'value' => '89',
-#                                'name' => 'HP OpenVMS Alpha'
-#                              },
-#                              {
-#                                'value' => '226',
-#                                'name' => 'Linux x86-64'
-#                              },
-#                              {
-#                                'value' => '361',
-#                                'name' => 'Fujitsu BS2000/OSD (S series)'
-#                              },
-#                              {
-#                                'value' => '319',
-#                                'name' => 'IBM AIX on POWER Systems (32-bit)'
-#                              },
-#                              {
-#                                'value' => '46',
-#                                'name' => 'Linux x86'
-#                              },
-#                              {
-#                                'value' => '314',
-#                                'name' => 'IBM z/VM on System z'
-#                              },
-#                              {
-#                                'value' => '43',
-#                                'name' => 'IBM i on POWER Systems'
-#                              },
-#                              {
-#                                'value' => '285',
-#                                'name' => 'Fujitsu BS2000/OSD (SX series)'
-#                              },
-#                              {
-#                                'value' => '208',
-#                                'name' => 'Microsoft Windows Itanium (64-bit)'
-#                              },
-#                              {
-#                                'value' => '2000',
-#                                'name' => 'Generic Platform'
-#                              }
-#                            ],
 #                  'name' => 'platform',
-#                  'idx' => 1,
-#                  'type' => 'option',
-#                  'size' => '1'
-#                }, 'HTML::Form::ListInput' );
-
-# $VAR3 = bless( {
-#                  'readonly' => 1,
-#                  '/' => '/',
-#                  'value_name' => 'Platform',
-#                  'value' => ' - Select a product pack first - ',
 #                  'name' => 'platform_none',
-#                  'type' => 'hidden'
-#                }, 'HTML::Form::TextInput' );
 
-# $VAR4 = bless( {
-#                  'readonly' => 1,
-#                  '/' => '/',
-#                  'value_name' => '',
-#                  'value' => '',
-#                  'name' => 'sort_product',
-#                  'type' => 'hidden'
-#                }, 'HTML::Form::TextInput' );
+}
 
-# $VAR5 = bless( {
-#                  'readonly' => 1,
-#                  '/' => '/',
-#                  'value_name' => '',
-#                  'value' => '',
-#                  'name' => 'sort_platform',
-#                  'type' => 'hidden'
-#                }, 'HTML::Form::TextInput' );
+sub Download {
+    # run the download for a url
+    my $ua=shift;
+    my $url=shift;
+    if ($url =~ /patch_file=([^&]+)/) {
+	my $ofile=$1;
+	warn "$url  -> $ofile";
+	my $res= $ua->mirror( $url, "output/".$ofile );
+#	my $res= $ua->get( $url ); #, "output/".$ofile );
+#	warn Dumper($res);
+    }
+    elsif ($url =~ /epack_part_number=(.+)/) {
+	my $ofile="EPACK_". $1;
+	warn "$url  -> $ofile";
+	my $res= $ua->mirror( $url, "output/".$ofile );
+#	my $res= $ua->get( $url );#, "output/".$ofile );
+#	warn Dumper($res);
+    }
+    else
+    {
+		warn "$url  -> ?";
+    }
+}
 
-# $VAR6 = bless( {
-#                  'readonly' => 1,
-#                  '/' => '/',
-#                  'value_name' => '',
-#                  'value' => '',
-#                  'name' => 'direction',
-#                  'type' => 'hidden'
-#                }, 'HTML::Form::TextInput' );
+sub download_aru {
+    my $ua=shift;
+    my $data=shift;
 
-# $VAR7 = bless( {
-#                  'readonly' => 1,
-#                  '/' => '/',
-#                  'value_name' => '',
-#                  'value' => '',
-#                  'name' => 'orderby',
-#                  'type' => 'hidden'
-#                }, 'HTML::Form::TextInput' );
-
-# $VAR8 = bless( {
-#                  'readonly' => 1,
-#                  'value_name' => '',
-#                  'name' => 'sortcolpressed',
-#                  'type' => 'hidden'
-#                }, 'HTML::Form::TextInput' );
+    
+    while ($data =~ m/(EPD\/Down[^\"\']+)[\"\']/gm){
+	Download $ua, 'https://edelivery.oracle.com/' . $1;
+    }
+    
+    while ($data =~ m/(EPD\/ViewDigest[^\"\']+)[\"\']/gm){
+	Download $ua, 'https://edelivery.oracle.com/' . $1;
+    }
     
 }
+
+sub packages_aru
+{
+    my $ua=shift;
+    my $data=shift;
+
+    open OUT, ">packages_aru.html";
+    print OUT $data;
+    close OUT;
+
+    my $form = HTML::Form->parse($data, 'https://edelivery.oracle.com');
+
+    open OUT, ">packagesaru.pm";
+    print OUT Dumper($form->inputs);;
+    close OUT;
+
+    my $product=$form->find_input('product');
+    die unless $product;
+#product
+#                                'name' => 'Oracle Fusion Middleware',                             'value' => '10120',
+#    $product->value('10120');
+#   'name' => 'Oracle Retail Applications' , 'value' => '12788'
+    $product->value('12788');
+
+
+    my $platform=$form->find_input('platform');
+    die unless $platform;
+    $platform->value('226');
+
+    # set the aru number
+    my $aru=$form->find_input('egroup_aru_number');
+    $aru->value('13098738');
+
+
+    my $res = $ua->request($form->click);
+    $data = $res->content();
+
+
+    open OUT, ">packagesaruout.html";
+    print OUT $data;
+    close OUT;
+
+    download_aru $ua, $data; # now run the downloads
+
+}
+
+
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 $ENV{HTTPS_VERSION} = 3;
 # $ENV{HTTPS_DEBUG} = 1;
@@ -632,16 +243,22 @@ my $cookie_jar = HTTP::Cookies->new(
     file     => "cookies.lwp",
     autosave => 1,
     );
+
+mkdir "output" unless -d "output";
+
 my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 $ua->cookie_jar( $cookie_jar );
 $ua->agent('Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322; FDM)');
-$ua->add_handler("request_send",  sub { shift->dump; return });
-$ua->add_handler("response_done", sub { shift->dump; return });
+
+# run debug 
+#$ua->add_handler("request_send",  sub { shift->dump; return });
+#$ua->add_handler("response_done", sub { shift->dump; return });
 
 my $welcome = getWelcome $ua, 'https://edelivery.oracle.com';
 my $export   = login $ua, $welcome;
 my $packages = exportAgree $ua,$export;
-packages $ua, $packages;
+my $paru = packages $ua, $packages;
+packages_aru $ua, $paru;
 
 
 # a list of packages, now we need to select one to get the downloads
