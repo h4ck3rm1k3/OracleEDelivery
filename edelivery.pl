@@ -114,6 +114,8 @@ sub packages
 {
     my $ua=shift;
     my $data=shift;
+    my $productno=shift;
+    my $platformno=shift;
     open OUT, ">packages.html";
     print OUT $data;
     close OUT;
@@ -126,45 +128,36 @@ sub packages
 
     my $product=$form->find_input('product');
     die unless $product;
-#product
-#                                'value' => '10120',
-#                                'name' => 'Oracle Fusion Middleware'
-    $product->value('10120');
+    $product->value($productno);
 
     my $platform=$form->find_input('platform');
     die unless $platform;
 
-    $platform->value('226');
+    $platform->value($platformno);
 
     my $res = $ua->request($form->click);
     $data = $res->content();
 
     return $data;
-# platform
-#                                'value' => '226',
-#                                'name' => 'Linux x86-64'
-# Options :    
-#                  'name' => 'product',
-#                  'name' => 'platform',
-#                  'name' => 'platform_none',
 
 }
 
 sub Download {
     # run the download for a url
     my $ua=shift;
+    my $output=shift;
     my $url=shift;
     if ($url =~ /patch_file=([^&]+)/) {
 	my $ofile=$1;
 	warn "$url  -> $ofile";
-	my $res= $ua->mirror( $url, "output/".$ofile );
+	my $res= $ua->mirror( $url, "$output/".$ofile );
 #	my $res= $ua->get( $url ); #, "output/".$ofile );
 #	warn Dumper($res);
     }
     elsif ($url =~ /epack_part_number=(.+)/) {
 	my $ofile="EPACK_". $1;
 	warn "$url  -> $ofile";
-	my $res= $ua->mirror( $url, "output/".$ofile );
+	my $res= $ua->mirror( $url, "$output/".$ofile );
 #	my $res= $ua->get( $url );#, "output/".$ofile );
 #	warn Dumper($res);
     }
@@ -176,23 +169,28 @@ sub Download {
 
 sub download_aru {
     my $ua=shift;
+    my $dir=shift;
     my $data=shift;
 
     
     while ($data =~ m/(EPD\/Down[^\"\']+)[\"\']/gm){
-	Download $ua, 'https://edelivery.oracle.com/' . $1;
+	Download $ua, $dir, 'https://edelivery.oracle.com/' . $1;
     }
     
     while ($data =~ m/(EPD\/ViewDigest[^\"\']+)[\"\']/gm){
-	Download $ua, 'https://edelivery.oracle.com/' . $1;
+	Download $ua, $dir, 'https://edelivery.oracle.com/' . $1;
     }
     
 }
+
 
 sub packages_aru
 {
     my $ua=shift;
     my $data=shift;
+    my $productno =shift;
+    my $platformno=shift;
+    my $aruno=shift;
 
     open OUT, ">packages_aru.html";
     print OUT $data;
@@ -206,20 +204,17 @@ sub packages_aru
 
     my $product=$form->find_input('product');
     die unless $product;
-#product
-#                                'name' => 'Oracle Fusion Middleware',                             'value' => '10120',
-#    $product->value('10120');
-#   'name' => 'Oracle Retail Applications' , 'value' => '12788'
-    $product->value('12788');
+    $product->value($productno);
 
 
     my $platform=$form->find_input('platform');
     die unless $platform;
-    $platform->value('226');
+    $platform->value($platformno);
 
     # set the aru number
     my $aru=$form->find_input('egroup_aru_number');
-    $aru->value('13098738');
+
+    $aru->value($aruno); 
 
 
     my $res = $ua->request($form->click);
@@ -230,7 +225,12 @@ sub packages_aru
     print OUT $data;
     close OUT;
 
-    download_aru $ua, $data; # now run the downloads
+    mkdir "output" unless -d "output";
+    mkdir "output/$productno" unless -d "output/$productno";
+    mkdir "output/$productno/$platformno" unless -d "output/$productno/$platformno";
+    mkdir "output/$productno/$platformno/$aruno" unless -d "output/$productno/$platformno/$aruno";
+
+    download_aru $ua, "output/$productno/$platformno/$aruno", $data; # now run the downloads
 
 }
 
@@ -257,8 +257,16 @@ $ua->agent('Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322
 my $welcome = getWelcome $ua, 'https://edelivery.oracle.com';
 my $export   = login $ua, $welcome;
 my $packages = exportAgree $ua,$export;
-my $paru = packages $ua, $packages;
-packages_aru $ua, $paru;
+my $paru = packages $ua, $packages,10120, 226;
+
+
+#product
+#'name' => 'Oracle Fusion Middleware',                             'value' => '10120',
+# prod '10120'
+# plat '226' # linux 64
+# aru '15737734' # Oracle WebLogic Server 12c Media Pack
+
+packages_aru $ua, $paru, 10120, 226, 15737734;
 
 
 # a list of packages, now we need to select one to get the downloads
